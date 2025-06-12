@@ -18,7 +18,7 @@ public static class Logger
     {
         AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
         {
-            Log(LogLevel.Fatal, $"Unhandled exception occurred: \n {args.ExceptionObject.ToString() ?? "Unknown exception}"}");
+            Log(LogLevel.Fatal, $"Unhandled exception occurred: \n {args.ExceptionObject.ToString() ?? "Unknown exception"}");
             DumpLogs();
         };
     }
