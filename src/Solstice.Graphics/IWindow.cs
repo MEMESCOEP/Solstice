@@ -64,4 +64,9 @@ public interface IWindow
     /// Blocking call. This will run the window's main loop until the window is closed or an exit condition is met.
     /// </summary>
     public void Run();
+
+    /// <summary>
+    /// Close the window. Also triggers Graphics cleanup.
+    /// </summary>
+    public void Close();
 }
