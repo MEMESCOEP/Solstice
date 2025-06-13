@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Solstice.Graphics;
+namespace Solstice.Graphics.Interfaces;
 
 public enum WindowState
 {

@@ -1,4 +1,4 @@
-﻿namespace Solstice.Graphics;
+﻿namespace Solstice.Graphics.Interfaces;
 
 public interface IInput
 {

@@ -1,10 +1,14 @@
-﻿using Solstice.Common;
+﻿using Solstice.Audio;
+using Solstice.Common;
 using Solstice.Graphics;
 
-var window = WindowFactory.CreateWindow(WindowSettings.Default() with
+var window = WindowFactory.CreateWindow(WindowSettings.Default with
 {
     Title = "Runtime",
+    VSyncEnabled = false,
 });
+
+var audio = AudioFactory.CreateAudio(AudioSettings.Default); // Creates a thread.
 
 window.OnUpdate += (w) =>
 {
@@ -12,3 +16,4 @@ window.OnUpdate += (w) =>
 };
 
 window.Run();
+audio.Close();

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Numerics;
 using Hexa.NET.Raylib;
+using Solstice.Graphics.Interfaces;
 
 namespace Solstice.Graphics.Implementations.RaylibImpl;
 
@@ -19,7 +20,6 @@ public class RaylibWindow : IWindow
     {
         // Initialize the window with the provided settings, as well as any audio devices
         Raylib.InitWindow((int)settings.Size.X, (int)settings.Size.Y, settings.Title);
-        Raylib.InitAudioDevice();
         Time = new Time();
 
         // Apply the window settings
@@ -110,7 +110,6 @@ public class RaylibWindow : IWindow
     {
         // TODO: tell the engine to clean up any allocated / loaded resources
         // Close any audio devices and the window
-        Raylib.CloseAudioDevice();
         Raylib.CloseWindow();
     }
 }

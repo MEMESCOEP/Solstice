@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Solstice.Graphics.Implementations.RaylibImpl;
+using Solstice.Graphics.Interfaces;
 
 namespace Solstice.Graphics;
 
@@ -12,7 +13,7 @@ public record WindowSettings(
     WindowStyle Style,
     Backend Backend)
 {
-    public static WindowSettings Default() => new(
+    public static WindowSettings Default => new(
         Title: "Solstice Window",
         VSyncEnabled: true,
         Size: new Vector2(800, 600),
