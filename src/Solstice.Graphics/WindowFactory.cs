@@ -1,10 +1,11 @@
 ﻿using System.Numerics;
-using Solstice.Graphics.Implementations.Raylib;
+using Solstice.Graphics.Implementations.RaylibImpl;
 
 namespace Solstice.Graphics;
 
 public record WindowSettings(
     string Title,
+    bool VSyncEnabled,
     Vector2 Size,
     Vector2 Position,
     WindowState State,
@@ -13,11 +14,12 @@ public record WindowSettings(
 {
     public static WindowSettings Default() => new(
         Title: "Solstice Window",
+        VSyncEnabled: true,
         Size: new Vector2(800, 600),
-        Position: new Vector2(100, 100),
+        Position: new Vector2(-1, -1),
         State: WindowState.Normal,
         Style: WindowStyle.Default,
-        Backend: Backend.OpenGL
+        Backend: Backend.Raylib
     );
 }
 
@@ -37,7 +39,7 @@ public static class WindowFactory
         return settings.Backend switch
         {
             Backend.Raylib => new RaylibWindow(settings),
-            _ => throw new NotSupportedException($"Backend {settings.Backend} is not supported.")
+            _ => throw new NotSupportedException($"The {settings.Backend} rendering backend is not supported.")
         };
     }
 }
