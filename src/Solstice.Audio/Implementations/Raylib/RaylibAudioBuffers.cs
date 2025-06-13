@@ -27,13 +27,25 @@ public class RaylibAudioBuffers : IAudioBuffers
         BufferSize = settings.BufferSize;
         
         // Initialize the 2 buffers
-        _buffers.Add(new float[BufferSize]);
-        _buffers.Add(new float[BufferSize]);
-        
+        if (settings.Channels == AudioChannels.Mono)
+        {
+            _buffers.Add(new float[BufferSize]);
+            _buffers.Add(new float[BufferSize]);
+        }
+        else if (settings.Channels == AudioChannels.Stereo)
+        {
+            _buffers.Add(new float[BufferSize * 2]); // Stereo has 2 channels
+            _buffers.Add(new float[BufferSize * 2]);
+        }
+        else
+        {
+            throw new NotSupportedException($"Audio channel type '{settings.Channels}' is not supported.");
+        }
+
         // Create the raylib stream
         rl.SetAudioStreamBufferSizeDefault(settings.BufferSize);
         
-        _stream = rl.LoadAudioStream((uint)settings.SampleRate, (uint)settings.BufferSize,
+        _stream = rl.LoadAudioStream((uint)settings.SampleRate, (uint)32,
             (uint)((settings.Channels == AudioChannels.Stereo) ? 2 : 1));
 
         rl.PlayAudioStream(_stream);
@@ -57,14 +69,11 @@ public class RaylibAudioBuffers : IAudioBuffers
                 var bufferSpan = _buffers[_currentBufferIndex].AsSpan();
                 unsafe
                 {
-                    fixed (float* ptr = bufferSpan)
+                    fixed (float* ptr = &bufferSpan[0])
                     {
-                        rl.UpdateAudioStream(_stream, ptr,
-                            (Channels == AudioChannels.Stereo ? BufferSize * 2 : BufferSize));
+                        rl.UpdateAudioStream(_stream, ptr, BufferSize);
                     }
                 }
-
-                _buffers[_currentBufferIndex] = new float[BufferSize]; // Reset the buffer for the next use
             }
         }
     }
