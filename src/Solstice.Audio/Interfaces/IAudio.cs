@@ -16,11 +16,6 @@ public interface IAudio
     /// A list of all audio channels. These channels can be used to play audio sources, and apply effects or filters to the audio.
     /// </summary>
     public List<IChannel> AudioChannels { get; }
-    
-    /// <summary>
-    /// A list of all audio sources. These generate the actual sound data that is played through the audio channels.
-    /// </summary>
-    public List<IAudioSource> AudioSources { get; }
 
     /// <summary>
     /// The raw audio buffers. It is not recommended to use directly, though if you need/want to, you can use it to access the raw audio data.

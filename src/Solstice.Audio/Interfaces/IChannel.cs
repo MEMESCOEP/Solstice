@@ -19,4 +19,16 @@ public interface IChannel
     public float Pan { get; set; }
     
     public bool IsMuted { get; set; }
+    
+    public List<IEffect> Effects { get; }
+     
+    public List<IAudioSource> Sources { get; }
+    
+    /// <summary>
+    /// Modify the audio data in the buffer, based on the channel's properties and effects.
+    /// </summary>
+    /// <param name="buffer"></param>
+    /// <param name="sampleRate"></param>
+    /// <param name="channels"></param>
+    public void Process(Span<float> buffer, int sampleRate, int channels);
 }

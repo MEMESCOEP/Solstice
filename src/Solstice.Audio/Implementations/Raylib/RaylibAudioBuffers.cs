@@ -55,8 +55,31 @@ public class RaylibAudioBuffers : IAudioBuffers
     
     private async Task UpdateStream()
     {
+        float phase = 0.0f;
+        
         while (Enabled)
         {
+            // Fill the buffer with a sine wave for testing purposes
+            if (_buffers.Count == 0)
+            {
+                await Task.Delay(10);
+                continue;
+            }
+            
+            lock (_lockObj)
+            {
+                var bufferSpan = _buffers[_currentBufferIndex].AsSpan();
+                int bufferSize = (Channels == AudioChannels.Mono) ? BufferSize : BufferSize * 2;
+                for (int i = 0; i < bufferSize; i++)
+                {
+                    // Generate a simple sine wave for testing
+                    bufferSpan[i] = (float)Math.Sin(phase);
+                    phase += (MathF.PI * 440.0f) / SampleRate; // 440 Hz sine wave
+                    if (phase >= MathF.PI * 2) phase -= MathF.PI * 2; // Wrap around!!!!
+                }
+            }
+            
+            
             // Wait for the audio stream to be ready
             while (!rl.IsAudioStreamProcessed(_stream))
             {

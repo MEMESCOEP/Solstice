@@ -9,7 +9,6 @@ public class RaylibAudio : IAudio
 {
     public IChannel MasterChannel { get; set; }
     public List<IChannel> AudioChannels { get; }
-    public List<IAudioSource> AudioSources { get; }
     public IAudioBuffers AudioBuffers { get; }
 
     public RaylibAudio(AudioSettings settings)
@@ -19,7 +18,6 @@ public class RaylibAudio : IAudio
 
         AudioBuffers = new RaylibAudioBuffers(settings);
         AudioChannels = new List<IChannel>();
-        AudioSources = new List<IAudioSource>();
         MasterChannel = new MasterChannel();
     }
     
@@ -37,7 +35,6 @@ public class RaylibAudio : IAudio
 
         // Clear the lists
         AudioChannels.Clear();
-        AudioSources.Clear();
         
         MasterChannel = null;
     }
