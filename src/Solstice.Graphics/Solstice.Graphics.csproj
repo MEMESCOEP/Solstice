@@ -12,6 +12,16 @@
       <PackageReference Include="Hexa.NET.ImGuizmo" Version="2.2.7" />
       <PackageReference Include="Hexa.NET.ImPlot" Version="2.2.7" />
       <PackageReference Include="Hexa.NET.Raylib" Version="1.2.1" />
+      <PackageReference Include="StirlingLabs.Assimp.Net" Version="23.4.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Solstice.Common\Solstice.Common.csproj" />
+      <ProjectReference Include="..\Solstice.Engine\Solstice.Engine.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Classes\" />
     </ItemGroup>
 
 </Project>

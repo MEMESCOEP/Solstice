@@ -1,5 +1,5 @@
 ﻿using System.Numerics;
-using Solstice.Graphics.Implementations.RaylibImpl;
+using Solstice.Graphics.Implementations;
 using Solstice.Graphics.Interfaces;
 
 namespace Solstice.Graphics;
