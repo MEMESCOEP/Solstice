@@ -9,6 +9,5 @@ public interface IEffect
     public bool IsEnabled { get; set; }
     public float Mix { get; set; }
 
-    public void ApplyEffect(Span<float> buffer, int sampleRate, AudioChannels channels);
-    public void ApplyEffect(Span<short> buffer, int sampleRate, AudioChannels channels);
+    public void Process(Span<float> buffer, int sampleRate, int channels);
 }

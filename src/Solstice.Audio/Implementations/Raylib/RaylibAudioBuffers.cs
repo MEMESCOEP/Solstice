@@ -14,6 +14,7 @@ public class RaylibAudioBuffers : IAudioBuffers
     public int BufferSize { get; }
 
     private int _currentBufferIndex = 0;
+    
     private readonly List<float[]> _buffers = new(2);
     
     private AudioStream _stream;
@@ -66,19 +67,10 @@ public class RaylibAudioBuffers : IAudioBuffers
                 continue;
             }
             
-            lock (_lockObj)
+            if (UpdateBuffer != null)
             {
-                var bufferSpan = _buffers[_currentBufferIndex].AsSpan();
-                int bufferSize = (Channels == AudioChannels.Mono) ? BufferSize : BufferSize * 2;
-                for (int i = 0; i < bufferSize; i++)
-                {
-                    // Generate a simple sine wave for testing
-                    bufferSpan[i] = (float)Math.Sin(phase);
-                    phase += (MathF.PI * 440.0f) / SampleRate; // 440 Hz sine wave
-                    if (phase >= MathF.PI * 2) phase -= MathF.PI * 2; // Wrap around!!!!
-                }
+                UpdateBuffer(this);
             }
-            
             
             // Wait for the audio stream to be ready
             while (!rl.IsAudioStreamProcessed(_stream))
@@ -103,20 +95,16 @@ public class RaylibAudioBuffers : IAudioBuffers
 
     public void SetBuffer(Span<float> buffer)
     {
-        if (buffer.Length != BufferSize)
+        lock (_lockObj)
         {
-            throw new ArgumentException($"Buffer size must be {BufferSize} samples, but received {buffer.Length} samples.");
+            buffer.CopyTo(_buffers[_currentBufferIndex]);
+
+            _currentBufferIndex = (_currentBufferIndex + 1) % _buffers.Count;
         }
-
-        // Copy the buffer into _buffers[_currentBufferIndex]
-        buffer.CopyTo(_buffers[_currentBufferIndex]);
-        
-        OnBuffersUpdated?.Invoke(this);
-
-        _currentBufferIndex = (_currentBufferIndex + 1) % _buffers.Count;
     }
 
-    public Action<IAudioBuffers>? OnBuffersUpdated { get; set; }
+    public Action<IAudioBuffers>? UpdateBuffer { get; set; }
+    
     public void Close()
     {
         Enabled = false;
@@ -133,5 +121,14 @@ public class RaylibAudioBuffers : IAudioBuffers
         
         // Close the audio device
         rl.CloseAudioDevice();
+    }
+
+    public Span<float> GetBuffer()
+    {
+        lock (_lockObj)
+        {
+            // Return the current buffer as a Span<float>
+            return _buffers[_currentBufferIndex].AsSpan();
+        }
     }
 }

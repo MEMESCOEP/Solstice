@@ -59,6 +59,11 @@ public interface IWindow
     /// After the window is updated, this action will be called with an updated input state.
     /// </summary>
     public Action<IWindow>? OnUpdate { get; set; }
+    
+    /// <summary>
+    /// The graphics interface. This is used to render graphics to the window.
+    /// </summary>
+    public IGraphics Graphics { get; }
 
     /// <summary>
     /// Blocking call. This will run the window's main loop until the window is closed or an exit condition is met.

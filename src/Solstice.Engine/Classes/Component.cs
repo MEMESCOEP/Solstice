@@ -1,6 +1,6 @@
 namespace Solstice.Engine.Classes;
 
-public abstract class GOComponent
+public abstract class Component
 {
     /// <summary>
     /// Holds a reference to the gameobject that this component is attached to
@@ -12,4 +12,19 @@ public abstract class GOComponent
     /// </summary>
     /// <returns>A reference to the gameobject that this script is attached to</returns>
     public GameObject GetOwner() => Owner;
+    
+    /// <summary>
+    /// Used to set up the component
+    /// </summary>
+    public abstract void Setup();
+    
+    /// <summary>
+    /// Called every frame once the object enters the tree
+    /// </summary>
+    public abstract void Update(float DeltaTime);
+    
+    /// <summary>
+    /// Called once when the object enters the scene
+    /// </summary>
+    public abstract void Start();
 }

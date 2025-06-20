@@ -1,4 +1,5 @@
 using System.Numerics;
+using Solstice.Common.Classes;
 
 namespace Solstice.Graphics.Interfaces;
 
@@ -79,10 +80,14 @@ public interface IMesh
     public MeshData MeshGeometryData { get; }
 
     /// <summary>
-    /// The shader to be used for rendering the mesh
-    /// NOTE: This shader is used every frame, so it automatically updates. Calling UpdateMeshData is not required
+    /// The material to be used for rendering the mesh
     /// </summary>
-    public IShader Shader { get; }
+    public IMaterial Material { get; set; }
+    
+    /// <summary>
+    /// The transform of the mesh in the world space
+    /// </summary>
+    public Transform Transform { get; set; }
 
     /// <summary>
     /// A function that updates mesh data
