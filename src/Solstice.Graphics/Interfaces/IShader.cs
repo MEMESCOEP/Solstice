@@ -1,25 +1,10 @@
 namespace Solstice.Graphics.Interfaces;
 
-public class ShaderProperty
-{
-    public ShaderProperty(string Name, object Value)
-    {
-        this.Name = Name;
-        this.Value = Value;
-        this.PropertyType = Value.GetType();
-    }
-
-    public string Name { get; }
-    public object Value { get; }
-    public Type PropertyType { get; }
-}
 
 /// <summary>
-/// A shader is a GPU program that is used to <INSERT PROPER DEFINITION>
+/// A shader is a GPU program that calculates and manipulates data. Often used for graphics, though can also be used for compute tasks.
 /// </summary>
 public interface IShader
 {
-    public List<ShaderProperty> ShaderProperties { get; }
-
     internal void Use();
 }

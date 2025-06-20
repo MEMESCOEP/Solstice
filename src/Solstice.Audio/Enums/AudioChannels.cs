@@ -2,6 +2,6 @@ namespace Solstice.Audio.Enums;
 
 public enum AudioChannels
 {
-    Mono,
-    Stereo
+    Mono = 1,
+    Stereo = 2,
 }

@@ -57,4 +57,8 @@ public class Transform
         // A common multiplication order is Y (yaw) -> X (pitch) -> Z (roll)
         Rotation = RotY * RotX * RotZ;
     }
+    
+    public Matrix4x4 Matrix => Matrix4x4.CreateScale(Scale) * 
+                               Matrix4x4.CreateFromQuaternion(Rotation) * 
+                               Matrix4x4.CreateTranslation(Position);
 }

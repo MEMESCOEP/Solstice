@@ -25,6 +25,7 @@ var audio = AudioFactory.CreateAudio(AudioSettings.Default); // Creates a thread
 
 window.OnUpdate += (w) =>
 {
+    scene.Update(w.Time.DeltaTime);
     
 };
 

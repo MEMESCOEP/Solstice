@@ -35,10 +35,11 @@ public interface IAudioBuffers
     public void SetBuffer(Span<float> buffer);
     
     /// <summary>
-    /// This event is triggered when the audio buffers are updated, and can receive more audio data.
-    /// You should ONLY enqueue stuff through this event, as it is called on the audio thread.
+    /// This event is triggered when the audio buffers need to be updated. There should only be 1 subscriber to this event.
+    /// You should ONLY set the buffer through this event, as it is called on the audio thread.
     /// </summary>
-    public Action<IAudioBuffers>? OnBuffersUpdated { get; set; }
+    public Action<IAudioBuffers>? UpdateBuffer { get; set; }
 
     public void Close();
+    Span<float> GetBuffer();
 }

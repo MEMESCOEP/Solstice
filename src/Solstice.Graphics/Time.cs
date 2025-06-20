@@ -16,4 +16,9 @@ public class Time
     /// The current frame number.
     /// </summary>
     public UInt64 FrameNumber { get; internal set; }
+
+    public override string ToString()
+    {
+        return $"TotalTime: {TotalTime:F2}s, DeltaTime: {DeltaTime:F2}s, FrameNumber: {FrameNumber}";
+    }
 }

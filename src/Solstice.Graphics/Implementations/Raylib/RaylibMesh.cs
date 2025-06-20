@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using Hexa.NET.Raylib;
 using Solstice.Common;
 using Solstice.Graphics.Interfaces;
+using Transform = Solstice.Common.Classes.Transform;
 
 namespace Solstice.Graphics.Implementations;
 
@@ -18,7 +19,9 @@ public class RaylibMesh : IMesh
     /// The shader to be used for rendering the mesh
     /// NOTE: This shader is used every frame, so it automatically updates. Calling UpdateMeshData is not required
     /// </summary>
-    public IShader Shader { get; private set; }
+    public IMaterial Material { get; set; }
+
+    public Transform Transform { get; set; } = new Transform();
 
     private uint[] IndicesArray;
     private float[] VertexArray;

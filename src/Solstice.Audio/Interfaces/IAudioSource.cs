@@ -7,5 +7,5 @@ public interface IAudioSource
 {
     public string Name { get; }
     
-    public void GenerateSoundData(Span<float> buffer, int sampleRate, int channels);
+    public void Process(Span<float> buffer, int sampleRate, int channels);
 }

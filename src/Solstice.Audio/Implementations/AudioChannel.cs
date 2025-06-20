@@ -3,12 +3,9 @@ using Solstice.Audio.Utilities;
 
 namespace Solstice.Audio.Implementations;
 
-/// <summary>
-/// A basic master channel.
-/// </summary>
-public class MasterChannel : IChannel
+public class AudioChannel : IChannel
 {
-    public string Name { get; set; } = "Master Channel";
+    public string Name { get; set; } = "Audio Channel";
     
     public float Volume { get; set; } = 1.0f;
     
@@ -22,9 +19,10 @@ public class MasterChannel : IChannel
     
     public void Process(Span<float> buffer, int sampleRate, int channels)
     {
+        buffer.Clear();
+        
         if (IsMuted)
         {
-            buffer.Clear();
             return;
         }
         
@@ -45,13 +43,6 @@ public class MasterChannel : IChannel
                 buffer[i] = panned[0];
                 buffer[i + 1] = panned[1];
             }
-        }
-        
-        // Ensure the buffer is within the [-1.0f, 1.0f] range
-        for (int i = 0; i < buffer.Length; i++)
-        {
-            if (buffer[i] > 1.0f) buffer[i] = 1.0f;
-            else if (buffer[i] < -1.0f) buffer[i] = -1.0f;
         }
     }
 }
