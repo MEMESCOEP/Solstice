@@ -3,6 +3,7 @@ using Hexa.NET.Raylib;
 using Solstice.Graphics.Interfaces;
 using Assimp;
 using Camera = Solstice.Common.Classes.Camera;
+using Matrix4x4 = System.Numerics.Matrix4x4;
 
 namespace Solstice.Graphics.Implementations;
 
@@ -10,6 +11,7 @@ public class RaylibGraphics : IGraphics
 {
     public List<IMesh> Meshes { get; }
     public List<Camera> Cameras { get; }
+    
     public Camera3D RLCamera;
 
     public RaylibGraphics()
@@ -43,7 +45,7 @@ public class RaylibGraphics : IGraphics
         RLCamera.Up = up;
     }
 
-    public RaylibMesh? LoadMesh(string Filename)
+    public IMesh? LoadMesh(string Filename)
     {
         AssimpContext Loader = new AssimpContext();
         Scene SceneFile = Loader.ImportFile(Filename, PostProcessSteps.Triangulate);
@@ -85,5 +87,32 @@ public class RaylibGraphics : IGraphics
         NewMesh.UpdateMeshData(NewMeshData);
         Meshes.Add(NewMesh);
         return NewMesh;
+    }
+
+    public void Render()
+    {
+        Raylib.BeginDrawing();
+        Raylib.ClearBackground(Raylib.Black);
+
+        // Draw 3D objects
+        foreach (Camera cam in Cameras)
+        {
+            foreach (RaylibMesh mesh in Meshes.Cast<RaylibMesh>())
+            {
+                UpdateRLCam(cam);
+                Raylib.BeginMode3D(RLCamera);
+                Raylib.DrawSphere(Vector3.UnitZ * 5f, 0.5f, Raylib.Red);
+                Raylib.DrawSphere(Vector3.UnitZ * -5f, 0.5f, Raylib.Blue);
+                Raylib.DrawSphere(Vector3.UnitX * 5f, 0.5f, Raylib.Green);
+                Raylib.DrawSphere(Vector3.UnitX * -5f, 0.5f, Raylib.Magenta);
+                Raylib.DrawMesh(mesh.RLMesh, ((RaylibMaterial)mesh.Material).RLMaterial, mesh.Transform.Matrix);
+                Raylib.EndMode3D();
+            }
+        }
+            
+        // Draw 2D objects
+        // TODO: implement 2D drawing and ImGui
+        Raylib.DrawFPS(0, 0);
+        Raylib.EndDrawing();
     }
 }

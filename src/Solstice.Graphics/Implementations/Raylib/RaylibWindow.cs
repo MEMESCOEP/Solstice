@@ -21,7 +21,8 @@ public class RaylibWindow : IWindow
     public IInput Input { get; }
     public Time Time { get; }
     public Action<IWindow>? OnUpdate { get; set; }
-    private RaylibGraphics RLGraphics;
+    
+    public IGraphics Graphics { get; }
 
     public RaylibWindow(WindowSettings settings)
     {
@@ -90,75 +91,26 @@ public class RaylibWindow : IWindow
         }
 
         // Now we create an instance of RaylibGraphics, it'll store a list of cameras in the scene as well as the meshes
-        RLGraphics = new();
+        Graphics = new RaylibGraphics();
+        
+        Input = new RaylibInput();
+        
+        // Disable the default ESC key to close the window, so we can handle it ourselves
+        Raylib.SetExitKey(0);
     }
     
     public void Run()
     {
-        Engine.Classes.Scene NewScene = new();
-        Camera NewCam = new Camera();
-        RLGraphics.Cameras.Add(NewCam);
-
-        RLGraphics.LoadMesh("./dragon.obj");
-
-        Material NewMat = Raylib.LoadMaterialDefault();
-        Raylib.SetMaterialTexture(ref NewMat, (int)MaterialMapIndex.Albedo, Raylib.LoadTextureFromImage(Raylib.GenImageChecked(30, 30, 6, 6, Raylib.Magenta, Raylib.Black)));
-
-        Raylib.DisableCursor();
         while (Raylib.WindowShouldClose() == false)
         {
-            // Update all gameobjects and their components
-            foreach (GameObject GO in NewScene.GameObjects)
-            {
-                GO.Update(0f);
-            }
+            OnUpdate?.Invoke(this);
+
+            Graphics.Render();
             
-            // Update and draw the graphics
-            Raylib.BeginDrawing();
-            Raylib.ClearBackground(Raylib.Black);
-
-            // Draw 3D objects
-            foreach (Camera Cam in RLGraphics.Cameras)
-            {
-                foreach (RaylibMesh Mesh in RLGraphics.Meshes.Cast<RaylibMesh>())
-                {
-                    RLGraphics.UpdateRLCam(Cam);
-                    Raylib.BeginMode3D(RLGraphics.RLCamera);
-                    Raylib.DrawSphere(Vector3.UnitZ * 5f, 0.5f, Raylib.Red);
-                    Raylib.DrawSphere(Vector3.UnitZ * -5f, 0.5f, Raylib.Blue);
-                    Raylib.DrawSphere(Vector3.UnitX * 5f, 0.5f, Raylib.Green);
-                    Raylib.DrawSphere(Vector3.UnitX * -5f, 0.5f, Raylib.Magenta);
-                    Raylib.DrawMesh(Mesh.RLMesh, NewMat, Matrix4x4.Identity);
-                    Raylib.EndMode3D();
-                }
-            }
-
-            Vector2 MouseDelta = Raylib.GetMouseDelta();
-
-            NewCam.Transform.RotateByEuler(new Vector3(MouseDelta.Y * 0.0005f, -MouseDelta.X * 0.0005f, 0f));
-
-            if (Raylib.IsKeyDown((int)KeyboardKey.W))
-            {
-                NewCam.Transform.Position += Vector3.Transform(Vector3.UnitZ, NewCam.Transform.Rotation) * 5f * Raylib.GetFrameTime();
-            }
-
-            if (Raylib.IsKeyDown((int)KeyboardKey.S))
-            {
-                NewCam.Transform.Position += Vector3.Transform(Vector3.UnitZ, NewCam.Transform.Rotation) * -5f * Raylib.GetFrameTime();
-            }
-
-            // Draw 2D objects
-            // TODO: implement 2D drawing and ImGui
-            Raylib.DrawFPS(0, 0);
-            Raylib.EndDrawing();
-
             // Update the window's time related properties
             Time.DeltaTime = Raylib.GetFrameTime();
             Time.TotalTime += Time.DeltaTime;
             Time.FrameNumber++;
-
-            // Finally, invoke the "OnUpdate" action if it is not null
-            OnUpdate?.Invoke(this);
         }
 
         // Unload resources and close devices and the window to prevent memory leaks and device errors
@@ -173,28 +125,4 @@ public class RaylibWindow : IWindow
         // Close any audio devices and the window
         Raylib.CloseWindow();
     }
-
-    public static Vector3 QuaternionToEuler(Quaternion q)
-    {
-        // Pitch (X axis rotation)
-        float sinp = 2.0f * (q.W * q.X + q.Y * q.Z);
-        float cosp = 1.0f - 2.0f * (q.X * q.X + q.Y * q.Y);
-        float pitch = MathF.Atan2(sinp, cosp);
-
-        // Yaw (Y axis rotation)
-        float siny = 2.0f * (q.W * q.Y - q.Z * q.X);
-        float yaw;
-        if (MathF.Abs(siny) >= 1f)
-            yaw = MathF.CopySign(MathF.PI / 2f, siny); // use 90 degrees if out of range
-        else
-            yaw = MathF.Asin(siny);
-
-        // Roll (Z axis rotation)
-        float sinr = 2.0f * (q.W * q.Z + q.X * q.Y);
-        float cosr = 1.0f - 2.0f * (q.Y * q.Y + q.Z * q.Z);
-        float roll = MathF.Atan2(sinr, cosr);
-
-        return new Vector3(pitch, yaw, roll); // in radians
-    }
-
 }
