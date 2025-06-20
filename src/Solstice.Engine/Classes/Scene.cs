@@ -9,11 +9,16 @@ public class Scene
     public Scene()
     {
         GameObjects = new List<GameObject>();
-        GameObjects.Add(new GameObject("Camera") { Components = { new CameraComponent() } });
+        AddGameObject(new GameObject("Camera") { Components = { new CameraComponent() } });
     }
     
     public void AddGameObject(GameObject gameObject)
     {
+        foreach (var component in gameObject.Components)
+        {
+            component.Owner = gameObject;
+        }
+        
         GameObjects.Add(gameObject);
     }
     
