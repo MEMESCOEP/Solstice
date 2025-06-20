@@ -1,4 +1,6 @@
 using Solstice.Common.Classes;
+using Solstice.Engine.Interfaces;
+using Solstice.Graphics.Interfaces;
 
 namespace Solstice.Engine.Classes;
 
@@ -18,7 +20,9 @@ public class GameObject
     /// Stores a list of components that are attached to this gameobject
     /// </summary>
     public List<Component> Components { get; } =  new List<Component>();
-    
+
+    public bool Enabled { get; set; } = true;
+
     public GameObject()
     {
         Transform = new Transform();
@@ -75,12 +79,22 @@ public class GameObject
     /// <summary>
     /// Called every frame once the object enters the tree
     /// </summary>
-    /// <param name="DeltaTime"></param>
-    public void Update(float DeltaTime)
+    public void Update(IWindow window)
     {
         foreach (var component in Components)
         {
-            component.Update(DeltaTime);
+            component.Update(window);
+        }
+    }
+
+    public void Render(IGraphics graphics)
+    {
+        foreach (var component in Components)
+        {
+            if (component is IRenderable renderable)
+            {
+                renderable.Render(graphics);
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ using System.Numerics;
 using Hexa.NET.Raylib;
 using Solstice.Graphics.Interfaces;
 using Assimp;
+using ZLinq;
 using Camera = Solstice.Common.Classes.Camera;
 using Matrix4x4 = System.Numerics.Matrix4x4;
 
@@ -10,7 +11,7 @@ namespace Solstice.Graphics.Implementations;
 public class RaylibGraphics : IGraphics
 {
     public List<IMesh> Meshes { get; }
-    public List<Camera> Cameras { get; }
+    public List<Camera> Cameras { get; set; }
     
     public Camera3D RLCamera;
 
@@ -85,34 +86,27 @@ public class RaylibGraphics : IGraphics
 
         // Update the raylib internal mesh and add it to the list of meshes to render
         NewMesh.UpdateMeshData(NewMeshData);
+        
+        NewMesh.Material = RaylibMaterial.DefaultMaterial;
+        
         Meshes.Add(NewMesh);
         return NewMesh;
     }
 
     public void Render()
     {
-        Raylib.BeginDrawing();
-        Raylib.ClearBackground(Raylib.Black);
-
-        // Draw 3D objects
         foreach (Camera cam in Cameras)
         {
-            foreach (RaylibMesh mesh in Meshes.Cast<RaylibMesh>())
+            Raylib.BeginMode3D(RLCamera);
+
+            foreach (var imesh in Meshes.AsValueEnumerable().Where(x => x.Enabled && x is RaylibMesh))
             {
+                var mesh = (RaylibMesh)imesh;
                 UpdateRLCam(cam);
-                Raylib.BeginMode3D(RLCamera);
-                Raylib.DrawSphere(Vector3.UnitZ * 5f, 0.5f, Raylib.Red);
-                Raylib.DrawSphere(Vector3.UnitZ * -5f, 0.5f, Raylib.Blue);
-                Raylib.DrawSphere(Vector3.UnitX * 5f, 0.5f, Raylib.Green);
-                Raylib.DrawSphere(Vector3.UnitX * -5f, 0.5f, Raylib.Magenta);
                 Raylib.DrawMesh(mesh.RLMesh, ((RaylibMaterial)mesh.Material).RLMaterial, mesh.Transform.Matrix);
-                Raylib.EndMode3D();
             }
-        }
             
-        // Draw 2D objects
-        // TODO: implement 2D drawing and ImGui
-        Raylib.DrawFPS(0, 0);
-        Raylib.EndDrawing();
+            Raylib.EndMode3D();
+        }
     }
 }

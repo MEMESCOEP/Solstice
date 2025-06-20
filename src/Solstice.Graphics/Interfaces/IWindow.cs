@@ -56,9 +56,20 @@ public interface IWindow
     public Time Time { get; }
     
     /// <summary>
-    /// After the window is updated, this action will be called with an updated input state.
+    /// Called every frame before rendering. This is where you can update the window's state, handle input, etc.
     /// </summary>
     public Action<IWindow>? OnUpdate { get; set; }
+    
+    /// <summary>
+    /// This is the function where IGraphics and IWindow are initialized. This is called once when the window is created.
+    /// Do NOT call any graphics functions before this is called, as the graphics context may not be initialized yet.
+    /// </summary>
+    public Action<IWindow>? OnLoad { get; set; }
+    
+    /// <summary>
+    /// After the window has been updated, this is called to render the window. This is where you can draw graphics to the window.
+    /// </summary>
+    public Action<IWindow>? OnRender { get; set; }
     
     /// <summary>
     /// The graphics interface. This is used to render graphics to the window.

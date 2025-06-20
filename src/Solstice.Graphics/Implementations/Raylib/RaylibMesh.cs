@@ -22,6 +22,7 @@ public class RaylibMesh : IMesh
     public IMaterial Material { get; set; }
 
     public Transform Transform { get; set; } = new Transform();
+    public bool Enabled { get; set; } = true;
 
     private uint[] IndicesArray;
     private float[] VertexArray;

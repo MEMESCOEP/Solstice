@@ -1,25 +1,22 @@
 using Solstice.Common.Classes;
 using Solstice.Engine.Classes;
+using Solstice.Graphics.Interfaces;
 
 namespace Solstice.Engine.Components;
 
 public class CameraComponent : Component
 {
-    private Camera _camera;
-    
-    public CameraComponent()
-    {
-        _camera = new Camera();
-    }
+    public Camera Camera;
     
     public override void Setup()
     {
-        
+        Camera = new Camera();
+        Camera.Transform = Owner.Transform;
     }
 
-    public override void Update(float DeltaTime)
+    public override void Update(IWindow window)
     {
-        _camera.Transform = Owner.Transform;
+        Camera.Transform = Owner.Transform;
     }
 
     public override void Start()

@@ -90,6 +90,11 @@ public interface IMesh
     public Transform Transform { get; set; }
 
     /// <summary>
+    /// Wether the mesh is enabled or not. If false, the mesh will not be rendered
+    /// </summary>
+    bool Enabled { get; set; }
+
+    /// <summary>
     /// A function that updates mesh data
     /// NOTE: This needs to be implemented individually in each backend mesh class
     /// </summary>

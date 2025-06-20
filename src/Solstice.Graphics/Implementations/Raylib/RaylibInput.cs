@@ -65,11 +65,9 @@ public class RaylibInput : IInput
         {
             case MouseState.Normal:
                 Raylib.EnableCursor();
-                Raylib.ShowCursor();
                 break;
             case MouseState.Locked:
                 Raylib.DisableCursor();
-                Raylib.HideCursor();
                 break;
             case MouseState.Hidden:
                 Raylib.HideCursor();

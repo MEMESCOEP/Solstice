@@ -13,7 +13,9 @@ namespace Solstice.Graphics.Implementations;
 public class RaylibWindow : IWindow
 {
     public string Title { get; set; }
+    
     public Vector2 Size { get; set; }
+    
     public Vector2 Position { get; set; }
     public WindowState State { get; set; }
     public WindowStyle Style { get; set; }
@@ -21,6 +23,9 @@ public class RaylibWindow : IWindow
     public Time Time { get; }
     public Action<IWindow>? OnUpdate { get; set; }
     
+    public Action<IWindow>? OnLoad { get; set; }
+    public Action<IWindow>? OnRender { get; set; }
+
     public IGraphics Graphics { get; }
 
     public RaylibWindow(WindowSettings settings)
@@ -100,11 +105,20 @@ public class RaylibWindow : IWindow
     
     public void Run()
     {
+        OnLoad?.Invoke(this);
+        
         while (Raylib.WindowShouldClose() == false)
         {
             OnUpdate?.Invoke(this);
 
-            Graphics.Render();
+            Raylib.BeginDrawing();
+            Raylib.ClearBackground(Raylib.Black);
+
+            OnRender?.Invoke(this);
+            
+            Raylib.DrawFPS(0, 0);
+            Raylib.EndDrawing();
+
             
             // Update the window's time related properties
             Time.DeltaTime = Raylib.GetFrameTime();

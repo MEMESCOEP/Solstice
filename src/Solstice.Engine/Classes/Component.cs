@@ -1,3 +1,5 @@
+using Solstice.Graphics.Interfaces;
+
 namespace Solstice.Engine.Classes;
 
 public abstract class Component
@@ -6,6 +8,8 @@ public abstract class Component
     /// Holds a reference to the gameobject that this component is attached to
     /// </summary>
     public GameObject Owner { get; internal set; }
+    
+    public bool Enabled { get; set; } = true;
 
     /// <summary>
     /// Gets the gameobject this script is attached to
@@ -21,7 +25,7 @@ public abstract class Component
     /// <summary>
     /// Called every frame once the object enters the tree
     /// </summary>
-    public abstract void Update(float DeltaTime);
+    public abstract void Update(IWindow window);
     
     /// <summary>
     /// Called once when the object enters the scene

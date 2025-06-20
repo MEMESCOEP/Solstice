@@ -7,22 +7,38 @@ public class Transform
     /// <summary>
     /// The 3D position; Vector3.Zero is the world origin
     /// </summary>
-    public Vector3 Position;
+    public Vector3 Position = Vector3.Zero;
 
     /// <summary>
     /// NOTE: Quaternions are to be used for rotations in order to prevent gimbal lock. To prevent normalizing every frame when this may not be needed, we just do it when the quaternion is changed
     /// </summary>
     private Quaternion _rotation = Quaternion.Identity;
+    
     public Quaternion Rotation
     {
         get => _rotation;
         set => _rotation = Quaternion.Normalize(value);
     }
+    
+    /// <summary>
+    /// The forward direction of the transform, which is the Z-axis in the local space
+    /// </summary>
+    public Vector3 Forward => Vector3.Transform(Vector3.UnitZ, Rotation);
+    
+    /// <summary>
+    /// The up direction of the transform, which is the Y-axis in the local space
+    /// </summary>
+    public Vector3 Up => Vector3.Transform(Vector3.UnitY, Rotation);
+    
+    /// <summary>
+    /// The right direction of the transform, which is the X-axis in the local space
+    /// </summary>
+    public Vector3 Right => Vector3.Transform(Vector3.UnitX, Rotation);
 
     /// <summary>
     /// The 3D scale; Vector3.One represents no scalling
     /// </summary>
-    public Vector3 Scale;
+    public Vector3 Scale = Vector3.One;
 
     /// <summary>
     /// Rotates the transform by euler angles
