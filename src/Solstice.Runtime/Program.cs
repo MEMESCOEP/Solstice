@@ -28,14 +28,14 @@ GameObject gameObject = null!;
 
 window.OnLoad += (w) =>
 {
-    scene.Setup();
-    
     camera = scene.GetGameObject("Camera")!;
     
     gameObject = new GameObject("Mesh")
     {
         Components = { new MeshComponent(w.Graphics.LoadMesh("./dragon.obj")) }
     };
+    
+    scene.AddGameObject(gameObject);
 };
 
 window.OnUpdate += (w) =>

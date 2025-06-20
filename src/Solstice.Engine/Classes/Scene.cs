@@ -30,6 +30,8 @@ public class Scene
             component.Owner = gameObject;
         }
         
+        gameObject.Setup();
+        
         GameObjects.Add(gameObject);
     }
     
