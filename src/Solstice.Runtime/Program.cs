@@ -42,35 +42,17 @@ window.OnUpdate += (w) =>
 {
     scene.Update(w);
 
-    if (w.Input.IsKeyDown(KeyCode.W))
-    {
-        camera.Transform.Position += camera.Transform.Forward * w.Time.DeltaTime;
-    }
+    Vector3 moveDir = Vector3.Zero;
 
-    if (w.Input.IsKeyDown(KeyCode.S))
-    {
-        camera.Transform.Position -= camera.Transform.Forward * w.Time.DeltaTime;
-    }
+    if (w.Input.IsKeyDown(KeyCode.W)) moveDir += camera.Transform.Forward;
+    if (w.Input.IsKeyDown(KeyCode.S)) moveDir -= camera.Transform.Forward;
+    if (w.Input.IsKeyDown(KeyCode.A)) moveDir += camera.Transform.Right;
+    if (w.Input.IsKeyDown(KeyCode.D)) moveDir -= camera.Transform.Right;
+    if (w.Input.IsKeyDown(KeyCode.Space)) moveDir += camera.Transform.Up;
+    if (w.Input.IsKeyDown(KeyCode.LeftShift)) moveDir -= camera.Transform.Up;
 
-    if (w.Input.IsKeyDown(KeyCode.A))
-    {
-        camera.Transform.Position += camera.Transform.Right * w.Time.DeltaTime;
-    }
-    
-    if (w.Input.IsKeyDown(KeyCode.D))
-    {
-        camera.Transform.Position -= camera.Transform.Right * w.Time.DeltaTime;
-    }
-    
-    if (w.Input.IsKeyDown(KeyCode.Space))
-    {
-        camera.Transform.Position += camera.Transform.Up * w.Time.DeltaTime;
-    }
-    
-    if (w.Input.IsKeyDown(KeyCode.LeftShift))
-    {
-        camera.Transform.Position -= camera.Transform.Up * w.Time.DeltaTime;
-    }
+    if (moveDir != Vector3.Zero)
+        camera.Transform.Position += Vector3.Normalize(moveDir) * w.Time.DeltaTime;
     
     if (w.Input.IsMouseButtonDown(MouseButton.Right))
     {
