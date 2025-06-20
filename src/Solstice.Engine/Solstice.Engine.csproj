@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Solstice.Common\Solstice.Common.csproj" />
+      <ProjectReference Include="..\Solstice.Graphics\Solstice.Graphics.csproj" />
     </ItemGroup>
 
 </Project>

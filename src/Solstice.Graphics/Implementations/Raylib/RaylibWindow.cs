@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Numerics;
 using Hexa.NET.Raylib;
-using Solstice.Engine.Classes;
 using Solstice.Graphics.Interfaces;
 using Camera = Solstice.Common.Classes.Camera;
 using Material = Hexa.NET.Raylib.Material;

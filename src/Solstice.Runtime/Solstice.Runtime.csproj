@@ -10,6 +10,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Solstice.Audio\Solstice.Audio.csproj" />
       <ProjectReference Include="..\Solstice.Common\Solstice.Common.csproj" />
+      <ProjectReference Include="..\Solstice.Engine\Solstice.Engine.csproj" />
       <ProjectReference Include="..\Solstice.Graphics\Solstice.Graphics.csproj" />
     </ItemGroup>
 
