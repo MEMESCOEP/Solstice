@@ -1,5 +1,4 @@
-using NAudio;
-using NAudio.Wave;
+using Solstice.Audio.Utilities.Decoders;
 
 namespace Solstice.Audio.Utilities;
 
@@ -8,31 +7,34 @@ namespace Solstice.Audio.Utilities;
 /// </summary>
 public static class AudioLoaders
 {
-    public static float[] LoadFile(string path, bool forceStereo = false)
+    /// <summary>
+    /// Returns a 44100Hz, 16-bit stereo (2 channel) audio buffer from the specified file path.
+    /// If the file is not in that format, it will be converted.
+    /// </summary>
+    public static float[] LoadFile(string path)
     {
         if (!File.Exists(path))
         {
             throw new FileNotFoundException($"Audio file not found: {path}");
         }
 
-        using var reader = new AudioFileReader(path);
-        var sampleCount = (int)reader.Length / sizeof(float);
-        var samples = new float[sampleCount];
-
-        int readSamples = reader.Read(samples, 0, sampleCount);
-
-        if (forceStereo && reader.WaveFormat.Channels == 1)
+        if (AudioDecoder.CreateDecoder(path, out var decoder))
         {
-            // Convert mono to stereo by duplicating the channel
-            var stereoSamples = new float[readSamples * 2];
-            for (int i = 0; i < readSamples; i++)
-            {
-                stereoSamples[i * 2] = samples[i];
-                stereoSamples[i * 2 + 1] = samples[i];
-            }
-            return stereoSamples;
-        }
+            var audioData = decoder!.Decode();
 
-        return samples.Take(readSamples).ToArray();
+            if (decoder.SampleRate == 44100 && decoder.BitDepth == 16 && decoder.Channels == 2)
+            {
+                return audioData;
+            }
+
+            if (decoder.SampleRate != 44100 && decoder.BitDepth == 16 && decoder.Channels == 2)
+            { 
+                return AudioConverter.Resample(audioData, decoder.SampleRate, 44100, decoder.Channels);
+            }
+            
+            throw new InvalidOperationException($"Unsupported audio format in file: {path}. Expected 44100Hz, 16-bit stereo.");
+        }
+        
+        throw new InvalidOperationException($"Failed to create audio decoder for file: {path}");
     }
 }

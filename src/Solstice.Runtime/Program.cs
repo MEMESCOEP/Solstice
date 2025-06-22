@@ -20,8 +20,8 @@ var window = WindowFactory.CreateWindow(WindowSettings.Default with
 
 var audio = AudioFactory.CreateAudio(AudioSettings.Default); // Creates a thread.
 
-// audio.MasterChannel.Sources.Add(new AudioSamplerGenerator(AudioLoaders.LoadFile("./song.mp3", true), channels: 2,
-//     looping: true, amplitude: 0.5f));
+audio.MasterChannel.Sources.Add(new AudioSamplerGenerator(AudioLoaders.LoadFile("./song.wav"), channels: 2,
+     looping: true, amplitude: 0.5f, isPlaying: true));
 
 GameObject camera = null!;
 GameObject gameObject = null!;
