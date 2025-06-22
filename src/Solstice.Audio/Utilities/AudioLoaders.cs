@@ -21,18 +21,24 @@ public static class AudioLoaders
         if (AudioDecoder.CreateDecoder(path, out var decoder))
         {
             var audioData = decoder!.Decode();
+            
+            if (decoder.Channels == 1)
+            {
+                // Convert mono to stereo by duplicating the channel
+                audioData = AudioConverter.MonoToStereo(audioData);
+            }
 
-            if (decoder.SampleRate == 44100 && decoder.BitDepth == 16 && decoder.Channels == 2)
+            if (decoder.SampleRate == 44100 && decoder.BitDepth == 16)
             {
                 return audioData;
             }
 
-            if (decoder.SampleRate != 44100 && decoder.BitDepth == 16 && decoder.Channels == 2)
+            if (decoder.SampleRate != 44100 && decoder.BitDepth == 16)
             { 
-                return AudioConverter.Resample(audioData, decoder.SampleRate, 44100, decoder.Channels);
+                return AudioConverter.Resample(audioData, decoder.SampleRate, 44100, 2);
             }
             
-            throw new InvalidOperationException($"Unsupported audio format in file: {path}. Expected 44100Hz, 16-bit stereo.");
+            throw new InvalidOperationException($"Unsupported audio format in file: {path}. Expected 44100Hz, 16-bit stereo. Got {decoder.SampleRate}Hz, {decoder.BitDepth}-bit, {decoder.Channels} channels.");
         }
         
         throw new InvalidOperationException($"Failed to create audio decoder for file: {path}");

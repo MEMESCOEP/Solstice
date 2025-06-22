@@ -48,4 +48,22 @@ public static class AudioConverter
 
         return resampled;
     }
+
+    public static float[] MonoToStereo(float[] audioData)
+    {
+        if (audioData == null || audioData.Length == 0)
+            throw new ArgumentException("Audio data cannot be null or empty.");
+
+        // Create a new array for stereo data
+        float[] stereoData = new float[audioData.Length * 2];
+        
+        for (int i = 0; i < audioData.Length; i++)
+        {
+            // Duplicate the mono channel into both left and right channels
+            stereoData[i * 2] = audioData[i];     // Left channel
+            stereoData[i * 2 + 1] = audioData[i]; // Right channel
+        }
+
+        return stereoData;
+    }
 }
