@@ -5,6 +5,7 @@ namespace Solstice.Audio.Classes;
 public class AudioContext
 {
     public bool IsPositional { get; set; }
+    public float MaxDistance { get; set; } = 15f;
 
     private Vector3 _rawListenerPosition;
     private Quaternion _rawListenerRotation;

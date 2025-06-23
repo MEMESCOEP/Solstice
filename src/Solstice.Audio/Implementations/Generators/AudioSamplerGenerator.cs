@@ -97,6 +97,21 @@ public class AudioSamplerGenerator : IAudioSource
                     var panned = AudioMath.PanSample([buffer[i], buffer[i]], panValue);
                     buffer[i] = panned[0];
                     buffer[i + 1] = panned[1];
+                    
+                    // Now apply the volume. 
+                    float maxDistance = context.MaxDistance;
+                    float distance = Vector3.Distance(context.GetListenerPosition(i / 2), Position);
+                    if (distance > maxDistance)
+                    {
+                        buffer[i] = 0.0f;
+                        buffer[i + 1] = 0.0f;
+                    }
+                    else
+                    {
+                        float gain = 1.0f - (distance / maxDistance);
+                        buffer[i] *= gain * Volume;
+                        buffer[i + 1] *= gain * Volume;
+                    }
                 }
             }
             else
