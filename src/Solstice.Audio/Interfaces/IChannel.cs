@@ -1,3 +1,5 @@
+using Solstice.Audio.Classes;
+
 namespace Solstice.Audio.Interfaces;
 
 /// <summary>
@@ -30,5 +32,5 @@ public interface IChannel
     /// <param name="buffer"></param>
     /// <param name="sampleRate"></param>
     /// <param name="channels"></param>
-    public void Process(Span<float> buffer, int sampleRate, int channels);
+    public void Process(Span<float> buffer, int sampleRate, int channels, AudioContext context);
 }

@@ -1,3 +1,6 @@
+using System.Numerics;
+using Solstice.Audio.Classes;
+
 namespace Solstice.Audio.Interfaces;
 
 /// <summary>
@@ -6,6 +9,9 @@ namespace Solstice.Audio.Interfaces;
 public interface IAudioSource
 {
     public string Name { get; }
-    
-    public void Process(Span<float> buffer, int sampleRate, int channels);
+    public bool IsPositional { get; set; }
+    public Vector3 Position { get; set; }
+
+
+    public void Process(Span<float> buffer, int sampleRate, int channels, AudioContext context);
 }

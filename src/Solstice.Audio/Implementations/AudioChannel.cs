@@ -1,3 +1,4 @@
+using Solstice.Audio.Classes;
 using Solstice.Audio.Interfaces;
 using Solstice.Audio.Utilities;
 
@@ -17,7 +18,7 @@ public class AudioChannel : IChannel
     
     public List<IAudioSource> Sources { get; } = new List<IAudioSource>();
     
-    public void Process(Span<float> buffer, int sampleRate, int channels)
+    public void Process(Span<float> buffer, int sampleRate, int channels, AudioContext context)
     {
         buffer.Clear();
         
@@ -27,7 +28,7 @@ public class AudioChannel : IChannel
         }
         
         foreach (var source in Sources)
-            source.Process(buffer, sampleRate, channels);
+            source.Process(buffer, sampleRate, channels, context);
 
         foreach (var effect in Effects)
             effect.Process(buffer, sampleRate, channels);

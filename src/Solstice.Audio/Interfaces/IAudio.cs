@@ -1,4 +1,7 @@
-﻿namespace Solstice.Audio.Interfaces;
+﻿using System.Numerics;
+using Solstice.Audio.Classes;
+
+namespace Solstice.Audio.Interfaces;
 
 /// <summary>
 /// IAudio is an interface to manage audio.
@@ -22,6 +25,14 @@ public interface IAudio
     /// Improper usage can lead to audio glitches/stuttering depending on performance.
     /// </summary>
     public IAudioBuffers AudioBuffers { get; }
+
+    /// <summary>
+    /// If the listener is position, this contains some data about the audio context, such as the listener's position and orientation.
+    /// </summary>
+    public AudioContext AudioContext { get; }
     
+    /// <summary>
+    /// After this method is called, the audio system stops processing audio.
+    /// </summary>
     public void Close();
 }

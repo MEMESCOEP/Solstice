@@ -1,4 +1,6 @@
+using System.Numerics;
 using Hexa.NET.Raylib;
+using Solstice.Audio.Classes;
 using rl = Hexa.NET.Raylib.Raylib;
 
 using Solstice.Audio.Interfaces;
@@ -11,6 +13,7 @@ public class RaylibAudio : IAudio
     public IChannel MasterChannel { get; set; }
     public List<IChannel> AudioChannels { get; }
     public IAudioBuffers AudioBuffers { get; }
+    public AudioContext AudioContext { get; } = new AudioContext();
 
     public RaylibAudio(AudioSettings settings)
     {
@@ -33,18 +36,19 @@ public class RaylibAudio : IAudio
         int bufferLength = AudioBuffers.BufferSize * numChannels;
 
         var totalBuffer = new float[bufferLength];
+        AudioContext.Update(AudioBuffers.BufferSize / (float) AudioBuffers.SampleRate, AudioBuffers.BufferSize);
 
         foreach (var channel in AudioChannels)
         {
             var tempBuffer = new float[bufferLength];
 
-            channel.Process(tempBuffer, sampleRate, numChannels);
+            channel.Process(tempBuffer, sampleRate, numChannels, AudioContext);
 
             for (int i = 0; i < bufferLength; i++)
                 totalBuffer[i] += channel.IsMuted ? 0f : tempBuffer[i];
         }
 
-        MasterChannel.Process(totalBuffer, sampleRate, numChannels);
+        MasterChannel.Process(totalBuffer, sampleRate, numChannels, AudioContext);
 
         for (int i = 0; i < bufferLength; i++)
         {
@@ -70,7 +74,5 @@ public class RaylibAudio : IAudio
 
         // Clear the lists
         AudioChannels.Clear();
-        
-        MasterChannel = null;
     }
 }

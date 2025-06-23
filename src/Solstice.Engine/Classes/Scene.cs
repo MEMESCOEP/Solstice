@@ -1,4 +1,6 @@
-﻿using Solstice.Engine.Components;
+﻿using Solstice.Audio.Interfaces;
+using Solstice.Engine.Components;
+using Solstice.Engine.Interfaces;
 using Solstice.Graphics.Interfaces;
 
 namespace Solstice.Engine.Classes;
@@ -10,7 +12,7 @@ public class Scene
     public Scene()
     {
         GameObjects = new List<GameObject>();
-        AddGameObject(new GameObject("Camera") { Components = { new CameraComponent() } });
+        AddGameObject(new GameObject("Camera") { Components = { new CameraComponent(), new AudioListenerComponent() } });
     }
     
     public void AddGameObject(GameObject gameObject)
@@ -86,5 +88,16 @@ public class Scene
             .ToList();
         
         graphics.Render(); // Actually render the scene
+    }
+
+    public void InitAudio(IAudio audio)
+    {
+        foreach (var gameObject in GameObjects)
+        {
+            if (gameObject.GetComponent<AudioListenerComponent>() is IInitAudio listener)
+            {
+                listener.InitAudio(audio);
+            }
+        }
     }
 }

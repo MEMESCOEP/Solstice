@@ -1,3 +1,5 @@
+using System.Numerics;
+using Solstice.Audio.Classes;
 using Solstice.Audio.Enums;
 using Solstice.Audio.Interfaces;
 using Solstice.Audio.Utilities;
@@ -7,7 +9,9 @@ namespace Solstice.Audio.Implementations.Generators;
 public class AudioToneGenerator : IAudioSource
 {
     public string Name { get; } = "Audio Tone Generator";
-    
+    public bool IsPositional { get; set; }
+    public Vector3 Position { get; set; }
+
     public float Frequency;
     public float Amplitude;
     public WaveType WaveType { get; set; }
@@ -24,7 +28,7 @@ public class AudioToneGenerator : IAudioSource
         _phase = 0f;
     }
     
-    public void Process(Span<float> buffer, int sampleRate, int channels)
+    public void Process(Span<float> buffer, int sampleRate, int channels, AudioContext context)
     {
         _phaseIncrement = 2 * MathF.PI * Frequency / sampleRate;
         

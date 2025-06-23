@@ -1,3 +1,5 @@
+using System.Numerics;
+using Solstice.Audio.Classes;
 using Solstice.Audio.Interfaces;
 using Solstice.Audio.Utilities;
 
@@ -6,6 +8,8 @@ namespace Solstice.Audio.Implementations.Generators;
 public class AudioSamplerGenerator : IAudioSource
 {
     public string Name { get; set; } = "Audio Sampler Generator";
+    public bool IsPositional { get; set; }
+    public Vector3 Position { get; set; }
 
     public bool IsLooping { get; set; }
     public bool IsPlaying { get; set; }
@@ -16,16 +20,11 @@ public class AudioSamplerGenerator : IAudioSource
     private float[] _samples;
     private int _currentSampleIndex;
     private int _channels;
+    private IAudioSource _audioSourceImplementation;
 
     /// <summary>
     /// Creates a new AudioSamplerGenerator with the provided samples. You can load samples from disk using AudioLoader.
     /// </summary>
-    /// <param name="samples"></param>
-    /// <param name="looping"></param>
-    /// <param name="isPlaying"></param>
-    /// <param name="channels">The number of channels in the sample. This might differ from the playback's channels!</param>
-    /// <param name="amplitude"></param>
-    /// <exception cref="ArgumentException"></exception>
     public AudioSamplerGenerator(float[] samples,bool looping = false, bool isPlaying = false, int channels = 2, float amplitude = 1.0f)
     {
         _samples = samples;
@@ -40,7 +39,7 @@ public class AudioSamplerGenerator : IAudioSource
         _currentSampleIndex = 0;
     }
     
-    public void Process(Span<float> buffer, int sampleRate, int channels)
+    public void Process(Span<float> buffer, int sampleRate, int channels, AudioContext context)
     {
         if (!IsPlaying || _samples.Length == 0 || sampleRate <= 0 || channels <= 0)
         {
@@ -80,11 +79,34 @@ public class AudioSamplerGenerator : IAudioSource
         // Apply pan if stereo
         if (channels == 2 && _channels == 2)
         {
-            for (int i = 0; i < buffer.Length; i += 2)
+            if (IsPositional && context.IsPositional)
             {
-                var panned = AudioMath.PanSample([buffer[i], buffer[i + 1]], Pan);
-                buffer[i] = panned[0];
-                buffer[i + 1] = panned[1];
+                // Convert to mono
+                for (int i = 0; i < buffer.Length; i += 2)
+                {
+                    Quaternion listenerQuat = context.GetListenerRotation(i / 2);
+                    Vector3 listenerRight = Vector3.Transform(Vector3.UnitX, listenerQuat);
+                    Vector3 sourceDirection = Vector3.Normalize(Position - context.GetListenerPosition(i / 2));
+                    float panValue = Vector3.Dot(sourceDirection, listenerRight);
+                    if (float.IsNaN(panValue))
+                        panValue = 0.0f; // Fallback to center if NaN occurs
+                
+                    // Invert pan value
+                    panValue = -panValue; // Invert pan for correct stereo panning
+                    
+                    var panned = AudioMath.PanSample([buffer[i], buffer[i]], panValue);
+                    buffer[i] = panned[0];
+                    buffer[i + 1] = panned[1];
+                }
+            }
+            else
+            {
+                for (int i = 0; i < buffer.Length; i += 2)
+                {
+                    var panned = AudioMath.PanSample([buffer[i], buffer[i + 1]], Pan);
+                    buffer[i] = panned[0];
+                    buffer[i + 1] = panned[1];
+                }
             }
         }
         else if (channels == 1 && _channels == 2) // Mono playback
