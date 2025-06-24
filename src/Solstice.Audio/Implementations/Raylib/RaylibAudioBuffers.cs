@@ -118,9 +118,6 @@ public class RaylibAudioBuffers : IAudioBuffers
         
         // Clear the buffers
         _buffers.Clear();
-        
-        // Close the audio device
-        rl.CloseAudioDevice();
     }
 
     public Span<float> GetBuffer()
