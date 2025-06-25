@@ -6,64 +6,39 @@ namespace Solstice.Graphics.Interfaces;
 /// <summary>
 /// A struct containing gemoetry data; to be used with the IMesh interface
 /// </summary>
-public struct MeshData
+public class MeshData
 {
-    /// <summary>
-    /// The number of vertices in the mesh
-    /// </summary>
-    int VertexCount;
+    public int VertexCount;
+    public int TriangleCount;
 
-    /// <summary>
-    /// The number of triangles in the mesh
-    /// </summary>
-    int TriangleCount;
+    public Vector3[] Vertices;
+    public Vector2[]? TexCoords;
+    public Vector2[]? TexCoords2;
+    public Vector3[]? Normals;
+    public Vector4[]? Tangents;
+    public Vector4[]? Colors;
+    public int[]? Indices;
 
-    /// <summary>
-    /// A list of 3D vertex positions (XYZ - 3 components per vertex)
-    /// </summary>
-    public List<Vector3> Vertices;
-
-    /// <summary>
-    /// A list of 2D texture coordinates (UV - 2 components per vertex) (shader-location = 1)
-    /// </summary>
-    public List<Vector2> TexCoords;
-
-    /// <summary>
-    /// A list of second 2D texture coordinates (UV - 2 components per vertex) (shader-location = 5)
-    /// </summary>
-    public List<Vector2> TexCoords2;
-
-    /// <summary>
-    /// A list of the 3D surface normal unit vectors in a mesh, used for lighting (XYZ - 3 components per vertex)
-    /// </summary>
-    public List<Vector3> Normals;
-
-    /// <summary>
-    /// A list of the mesh's vertex tangents, often used (and required) for normal mapping (XYZW - 4 components per vertex)
-    /// </summary>
-    public List<Vector4> Tangents;
-
-    /// <summary>
-    /// A list of optional per-vertex colors in the RGBA format, useful for debugging
-    /// </summary>
-    public List<Vector4> Colors;
-
-    /// <summary>
-    /// A list of the mesh's vertex indices that describe how to form triangles in a indexed renderer
-    /// </summary>
-    public List<int> Indices;
-
-    public MeshData()
+    public MeshData(int vertexCount, int triangleCount, bool IsIndexed)
     {
-        VertexCount = 0;
-        TriangleCount = 0;
-        Vertices = new List<Vector3>();
-        TexCoords = new List<Vector2>();
-        TexCoords2 = new List<Vector2>();
-        Normals = new List<Vector3>();
-        Tangents = new List<Vector4>();
-        Colors = new List<Vector4>();
-        Indices = new List<int>();
+        VertexCount = vertexCount;
+        TriangleCount = triangleCount;
+        
+        Vertices = new Vector3[vertexCount];
+        TexCoords = new Vector2[vertexCount];
+        //TexCoords2 = new Vector2[vertexCount];
+        Normals = new Vector3[vertexCount];
+        //Tangents = new Vector4[vertexCount];
+        //Colors = new Vector4[vertexCount];
+
+        if (IsIndexed == true)
+        {
+            Indices = new int[triangleCount * 3];
+        }
+        else
+        {
+            Indices = null;
+        }
     }
 }
 

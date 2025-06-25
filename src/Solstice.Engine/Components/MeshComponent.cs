@@ -20,7 +20,7 @@ public class MeshComponent : Component, IRenderable
 
     public override void Update(IWindow window)
     {
-        
+        Mesh.Transform = Owner.Transform;
     }
 
     public override void Start()

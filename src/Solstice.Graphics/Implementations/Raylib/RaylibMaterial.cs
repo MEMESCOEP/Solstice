@@ -16,7 +16,7 @@ public class RaylibMaterial : IMaterial
 
     public List<MaterialProperty> Properties { get; }
 
-    public Material RLMaterial { get; }
+    public Material RLMaterial; // { get; private set; }
 
     public static IMaterial DefaultMaterial { get; } = CreateDefaultMaterial();
 
@@ -26,11 +26,18 @@ public class RaylibMaterial : IMaterial
         Properties = properties;
         RLMaterial = rlMaterial;
     }
+
+    public void UpdateProperties(List<MaterialProperty> NewProperties)
+    {
+        Properties.Clear();
+        Properties.AddRange(NewProperties);
+        
+        Raylib.SetMaterialTexture(ref RLMaterial, (int)MaterialMapIndex.Albedo, (Texture)NewProperties[0].Value);
+    }
     
     public static IMaterial CreateDefaultMaterial()
     {
-        Image checkerImage = Raylib.GenImageChecked(30, 30, 6, 6, Raylib.Magenta, Raylib.Black);
-        Texture checkerTexture = Raylib.LoadTextureFromImage(checkerImage);
+        Texture checkerTexture = Raylib.LoadTextureFromImage(Raylib.GenImageChecked(60, 60, 2, 2, Raylib.Magenta, Raylib.Black));
 
         Material mat = Raylib.LoadMaterialDefault();
         Raylib.SetMaterialTexture(ref mat, (int)MaterialMapIndex.Albedo, checkerTexture);

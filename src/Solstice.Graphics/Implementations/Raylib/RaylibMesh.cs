@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using Hexa.NET.Raylib;
-using Solstice.Common;
 using Solstice.Graphics.Interfaces;
 using Transform = Solstice.Common.Classes.Transform;
 
@@ -23,41 +23,69 @@ public class RaylibMesh : IMesh
 
     public Transform Transform { get; set; } = new Transform();
     public bool Enabled { get; set; } = false;
-
+    
     private uint[] IndicesArray;
     private float[] VertexArray;
     private float[] NormalArray;
+    private float[] TexCoordArray;
 
     /// <summary>
-    /// A function that updates mesh data
+    /// A function that sets this mesh's data to the passed in data and uploads this new data to the GPU
     /// </summary>
     public unsafe void UpdateMeshData(MeshData NewData)
     {
         RLMesh = new Mesh();
         MeshGeometryData = NewData;
 
-        IndicesArray = NewData.Indices.Select(i => (uint)i).ToArray();
-        VertexArray = NewData.Vertices.SelectMany(v => new float[] { v.X, v.Y, v.Z }).ToArray();
+        // Prepare arrays for Raylib upload
+        ushort[]? IndicesArray = NewData.Indices != null ? NewData.Indices.Select(i => (ushort)i).ToArray() : null;
 
-        fixed (uint* IndexPtr = IndicesArray)
-        fixed (float* VertexPtr = VertexArray)
-        {
-            RLMesh.Indices = (ushort*)IndexPtr;
-            RLMesh.Vertices = VertexPtr;
-            RLMesh.TriangleCount = NewData.Indices.Count / 3;
-            RLMesh.VertexCount = NewData.Vertices.Count;
-        }
+        float[] VertexArray = NewData.Vertices.SelectMany(v => new float[] { v.X, v.Y, v.Z }).ToArray();
 
-        if (NewData.Normals != null && NewData.Normals.Count == NewData.Vertices.Count)
+        float[]? TexCoordArray = (NewData.TexCoords != null && NewData.TexCoords.Length == NewData.Vertices.Length)
+            ? NewData.TexCoords.SelectMany(uv => new float[] { uv.X, uv.Y }).ToArray()
+            : null;
+
+        float[]? NormalArray = (NewData.Normals != null && NewData.Normals.Length == NewData.Vertices.Length)
+            ? NewData.Normals.SelectMany(n => new float[] { n.X, n.Y, n.Z }).ToArray()
+            : null;
+
+        // Assign arrays as pointers — these pointers are valid only during this call
+        fixed (float* vertexPtr = VertexArray)
+        fixed (float* texPtr = TexCoordArray)
+        fixed (float* normalPtr = NormalArray)
         {
-            NormalArray = NewData.Normals.SelectMany(n => new float[] { n.X, n.Y, n.Z }).ToArray();
-            fixed (float* normalPtr = NormalArray)
+            RLMesh.Vertices = vertexPtr;
+            RLMesh.Texcoords = texPtr;
+            RLMesh.Normals = normalPtr;
+            RLMesh.VertexCount = NewData.VertexCount;
+            RLMesh.TriangleCount = NewData.TriangleCount;
+
+            if (IndicesArray != null)
             {
-                RLMesh.Normals = normalPtr;
+                fixed (ushort* indexPtr = IndicesArray)
+                {
+                    RLMesh.Indices = indexPtr;
+                }
             }
+            else
+            {
+                RLMesh.Indices = null;
+            }
+
+            Raylib.UploadMesh(ref RLMesh, false);
         }
 
-        Raylib.UploadMesh(ref RLMesh, false);
+        // Null out pointers so RLMesh no longer references managed memory
+        RLMesh.Vertices = null;
+        RLMesh.Texcoords = null;
+        RLMesh.Normals = null;
+        RLMesh.Indices = null;
+    }
+    
+    public void SetMaterial(IMaterial NewMaterial)
+    {
+        Material = NewMaterial;
     }
 
     /// <summary>
@@ -65,14 +93,7 @@ public class RaylibMesh : IMesh
     /// </summary>
     public void Destroy()
     {
-        Logger.Log(LogLevel.Info, "Destroying mesh");
-
-        // Unload GPU mesh data
         if (RLMesh.VertexCount > 0)
-        {
             Raylib.UnloadMesh(RLMesh);
-        }
-        
-        Logger.Log(LogLevel.Info, "Fuckin DONE !!");
     }
 }

@@ -27,6 +27,7 @@ public class RaylibWindow : IWindow
     public Action<IWindow>? OnRender { get; set; }
 
     public IGraphics Graphics { get; }
+    private bool WindowClosed = false;
 
     public RaylibWindow(WindowSettings settings)
     {
@@ -107,7 +108,7 @@ public class RaylibWindow : IWindow
     {
         OnLoad?.Invoke(this);
         
-        while (Raylib.WindowShouldClose() == false)
+        while (WindowClosed == false && Raylib.WindowShouldClose() == false)
         {
             OnUpdate?.Invoke(this);
 
@@ -115,7 +116,7 @@ public class RaylibWindow : IWindow
             Raylib.ClearBackground(Raylib.Black);
 
             OnRender?.Invoke(this);
-            
+
             Raylib.DrawFPS(0, 0);
             Raylib.EndDrawing();
 
@@ -132,10 +133,17 @@ public class RaylibWindow : IWindow
 
     public void Close()
     {
+        // Only attempt to close the window if it hasn't already been closed before
+        if (WindowClosed == true)
+        {
+            return;
+        }
+        
         // Tell raylib to clean up any allocated / loaded resources
         //RLGraphics.UnloadData();
 
         // Close any audio devices and the window
         Raylib.CloseWindow();
+        WindowClosed = true;
     }
 }
